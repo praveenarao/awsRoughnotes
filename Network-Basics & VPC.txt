@@ -1,0 +1,317 @@
+
+Public IP Address : Its global unique and assigned to a device for communication over the internet.
+--> ISP (internet Service provider : ACT/Bean/Jio/Airtel). Cost Us.
+
+
+Private IP Address : Its used within internal networks, Its unique but with in the network. 
+--> We can choose a range and use within network withpout paying anything to anyone. Only Internal communication is possible.
+
+===
+
+IPv4 : 32 bit address space, Supports 4.3 billion unique IPs. (2^32)
+
+IPv6 : 128 bit address space, Supports 340 unidecilion unique IPs. (2^128)
+
+===
+
+How to check IP Address of your laptop / Network.??
+
+Below commands shows private IPs of your device.
+
+windows : ipconfig (or) ipconfig /all. 
+Linux : ifconfig (or) ip addr (or) ip		: 192.168.0.134
+
+To view public IP of your network, try below websites.
+
+https://whatismyipaddress.com/				: 49.206.53.124
+https://iplocation.io/
+
+===
+
+IPv4 Address has 5 Classes..
+
+Class A : 0 - 126 	: 0.0.0.0 - 126.255.255.255 : 
+Class B : 128 - 191 : 128.0.0.0 - 191.255.255.255
+Class C : 192 - 223 : 192.0.0.0 - 223.255.255.255
+
+Class D : 224 - 239 : 224.0.0.0 - 239.255.255.255 (Multicasting)
+Class E : 240 - 255 : 240.0.0.0 - 255.255.255.255 (Reserved for R&D)
+
+127.0.0.0 : Is reserved for loopback testing purpose.
+
+IPv4 is 32 bit : 8 bit + 8 bit + 8 bit + 8 bit = 32 bit 
+
+====
+
+Every Class (A-C) has a private IP address range to use for internal communications for free.. 
+
+Class A : 10.0.0.0 - 10.255.255.255
+Class B : 172.16.0.0 - 172.31.255.255
+Class C : 192.168.0.0 - 192.168.255.255
+
+====
+
+Network : group of interconnected devices. All these devices can communicate each other. (your home internet via router)
+
+Host : a device with in a network (printer, laptop, phone, tv, alexa)
+
+====
+
+Class A : N.H.H.H
+Class B : N.N.H.H
+Class C : N.N.N.H
+
+
+Class A : 0 - 126 	: 0.0.0.0 - 126.255.255.255 : 127 networks, 16 million devices for each network
+Class B : 128 - 191 : 128.0.0.0 - 191.255.255.255 : 16,000 networks, 65,000 devices for each network
+Class C : 192 - 223 : 192.0.0.0 - 223.255.255.255 : 2 million networks.. 256 hosts for each network
+
+
+How many networks and hosts we can create using class A .? Ans : 127 network.. Each network will have 16 million hosts..
+1.(0-255).(0-255).(0-255)
+
+
+HOw many networks and hosts we can create using class C .? Ans :  2 million networks.. Each network supports 256 hosts...
+
+192.168.0.0/1/2/3/4...255
+N.N.N.H
+
+How many hosts/devices we can add to this network.? Ans : 256
+
+
+====
+
+DHCP : Dynamic host Configuration protocol : It automatically allocates IP address to the devices added/joined to the network. 
+
+====
+
+AWS VPC supports Min /28 network and Max /16 network.??
+
+/32 = 32 - 32 = 0 = 2^0 = 1
+/31 = 32 - 31 = 1 = 2^1 = 2
+/30 = 32 - 30 = 2 = 2^2 = 4
+/29 = 32 - 29 = 3 = 2^3 = 8
+
+/28 = 32 - 28 = 4 = 2^4 = 16
+/25 = 32 - 25 = 7 = 2^7 = 128
+/24 = 32 - 24 = 8 = 2^8 = 256
+
+/16 = 32 - 16 = 16 = 2^16 = 65536
+
+/0 = 32 - 0 = 32 = 2^32 = 4.3 billion ips
+
+=====
+
+==> AWS Reserves 5 IPs..
+
+In general networks, 2 IPs will be reserved.. (First IP and Last IP)
+First IP : Represent network (Network ID)
+Last IP : Represent Broadcasting (Broadcasting IP)
+
+Along with Network ID and Broadcasting ID, AWS Reserves 3 more IPs.. 
+
+1 --> AWS DNS Server
+2 --> VPC Router
+3 --> Future usage
+
+====
+
+/24 ==> 256 IPs ==> 256 - 5 = 251 Usable IPs
+/16 ==> 65536 IPs ==> 65536 - 5 = 65531 Usable IPs
+/28 ==> 16 IPs ==> 16 - 5 = 11 Usable IPs
+
+
+Domain Registrers: Godaddy / bigRock.. avinash.com --> ICANN (Domain uniqueness) / IANA : RootZone DB : .com .in .xyz 
+
+Who see public IP.?? ISP : have to reserve a pool of IP..
+
+DHCP.. : IP COnflict issue
+
+
+===========================================
+
+VPC : Virtual Private Cloud : Region specific : an isolated virtual network. It allow us to launch ec2 instance and DBs... \
+
+
+Default VPC : All subnets are public Subnets..!!
+
+
+Public Subnet : Internet facing subnet.. Resources running here can access internet and can be accesable over internet.. 
+
+Private Subnet : Isolated without direct internet access.. cannot accesable over the internet.. Secured compared to Public Subnet.. 
+(Private subnet with internet - NAT gateway)
+(Private subnet without internet)
+
+
+CIDR Range : Classless Inter-Domain Routing : IP range for our VPC.. 
+
+1 AZ = 1 Subnet..
+
+Pre-Checks and Design considerations : 
+
+1. How big VPC we need..? ans :  Instances   : 192.168.0.0/22 - 1024 IPs
+2. How many subnets we need to create.? 6 Subnets..
+	Public ap-south-1a & ap-south-1b - web  (192.168.0.0/25	 & 192.168.0.128/25	)
+	Private ap-south-1a & ap-south-1b - APP (192.168.1.0/25	& 192.168.1.128/25	)
+	Private ap-south-1a & ap-south-1b - DB (192.168.2.0/25	& 192.168.2.128/25	)
+	
+3. Any plans for future explansions.? 
+	We need to reserve some IPs for future usage (192.168.3.0/25 & 192.168.3.128/25	)
+
+
+Public : ELB, NAT Gateway, jump Server/Bastian Host (2 AZs )
+Private for APP: Application Servers (2 AZs)
+Private for DB: Database (2 AZs)
+..??? (2 AZs)
+
+
+============
+
+
+Step 1 : Create a VPC : CIDR - 192.168.0.0/22
+	name; my-custom-vpc
+
+Step 2 : Create Subnets 
+
+	cvpc-web-pub-sn-1a 	192.168.0.0/25
+	cvpc-web-pub-sn-1b	192.168.0.128/25
+	
+	cvpc-app-pvt-sn-1a	192.168.1.0/25
+	cvpc-app-pvt-sn-1b	192.168.1.128/25
+	
+	cvpc-db-pvt-sn-1a	192.168.2.0/25
+	cvpc-db-pvt-sn-1b	192.168.2.128/25
+	
+
+Step 3 : Create internet gateway and associate it with Custom VPC.
+
+Step 4 : Create Route Tables with in the VPC.
+
+Public Route : Add route via Internet gateway. associate "public subnets"
+Private Route : "DO NOT" Add route via Internet gateway. Just associate "private subnets"
+
+IGW makes a subnet as Public / private. if any Routetable has entry via IGW, All subnets associated to that RT are public subnets.
+
+Step 5 (Optional) : Enable Auto-assign public IP for public subnets.  (choose public subnet --> edit subnet settings --> enable ipv4 public ip)
+
+Step 6 (Optional - Recommended) - Enable DNS hostnames at VPC level. (VPC --> edit VPC Settings --> enable dns host names)
+
+=====
+
+Jump Server / Bastian Host : A Dedicated ec2 instance runs in custom VPC's public subnet, used to connecting to Private subnet ec2 instances. 
+
+
+=====
+
+/23 : 512 IPs VPC : 
+
+Subnets : 8 Subnets : 
+
+2 public (2 zones) - internet facing workload - web
+2 private (2 zones) - APP Workdload
+2 private (2 zones) - DB workload
+2 Private (2 zone) - ** i.e; Redshift / Lambda
+
+=====
+
+How to connect to Private subnet instance securely.?
+
+Ans : We connect to "Jump server / Bastian Host" running in Public SUbnet, Then we can use Private subnet instance Private IP address with keypair or username/password.
+
+=====
+
+NAT Gateway : Provide internet to private subnet resources wihtout compromising on secutiry part.
+NAT should run in CVPC Public Subnet.
+Need to generate an EIP. **Make sure to release EIP after NAT Delation.
+
+
+SG are Stateless.
+Stateless : Security Group : We need to takes care about only inbound rules. Whetever you open at inbound, automatically allowed at outbound.
+
+NACLs are stateful.
+Stateful : NACLS : We need to open traffic at inbound and outbound level also. 
+
+
+==========
+
+EC2 Instance is in CustomVPC Private Subnet (Without NAT Gateway & Without Internet Gateway).. 
+but, i want to access S3 from private SUbnet instance.!!! 
+Ans: Create an IAM Role and attach it to ec2 instance. 
+
+Create an Endpoint and add an entry in CustomVPC Private Route Table. SO that, private subnet ec2 instance can access s3 service. 
+
+Gateway : Managed By AWS, Interface will be created and managed by AWS. **FREE
+interface Endpoint : Managed by Customer, Interface will be created in our OWN AWS account. Traffic flow happens over that Interface only. **COST US 
+
+=========
+
+VPC Peering : Designed to enable communication acros multiple VPCs. 
+These VPC can be present in Same Region / other region... Same account / other account.. 
+**Source VPC and Target VPC sould not have same CIDR Range. (IP range should not conflict)
+
+========
+
+Transit gateway : **NO FREE TIER ELIGIBILITY : Alternative option to VPC-Peering. Enterprise level resource.
+
+Step 1 : Create a transit gateway in Central account. (Central-networking-Account)
+
+Step 2 : Share it with multiple AWS accounts (Member Accounts) using RAM (Resource Access Manager) Service.
+
+Step 3 : In CentralNW Account (Where TGW present), Create a TGW Attachment and choose the VPC.
+
+Step 4 : In Member Account (aviz8), Create a transit gateway attachment. 
+
+Step 5 : In CentralNW Account, Under Attachments screen, Find the shared Attachment and "Accept" the attachment.
+
+Step 6 : Now, Edit Route Tables in "CentralNW Account" and "Member Account", Add routes accordingly ( CentralNW --> add a route with member VPC CIDR and Vice versa)
+
+
+========
+
+Site-to-Site VPN Connection: **NO FREE TIER ELIGIBILITY
+
+Step 1 : Create a Customer Private gateway (Enter your Org Firewall's Public IP)
+Step 2 : Create a Virtual private gateway (AWS END)
+Step 3 : Create a Site 2 site vpn using CPGW & VPGW
+Step 4 : Download the configuration depends on the firewall device your org is using, and share it with your network team who manages the fw. they need to apply these changes in FW device. Tunnel will be up. 
+
+
+=======
+
+NAT Gateway : Designed to provide interent to Private SUbnet Instances. 
+
+IPv6 : Engress Only Internet gateway : Designed to provide interent to IPv6 Private SUbnet Instances. 
+
+======
+
+Can i add one more CIDR range to my VPC, if existing one is full.?
+Ans: Yes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

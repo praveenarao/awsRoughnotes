@@ -1,0 +1,198 @@
+S3 : Simple Storage service
+
+Object based storage : Flat files : Objects : S3
+
+https://s3.regioncode.amazonaws.com/bucketname/objectname
+
+https://bucket-name.s3.region-code.amazonaws.com/objectname
+
+https://bucket-name.s3.amazonaws.com/objectname
+
+------
+
+Stores in S3-Standard Storage Class
+
+S3 Standard : Frequently accessed Data (Default storage class) : Access without delay : phone : (3 copies across diff AZs in selected region)
+
+S3 Standard - IA (Infrequently Accessed) : Less freq acessed data : Access without delay : laptop (3 copies across diff AZs in selected region) : 99.9%
+
+S3 OneZone - IAM : Less freq acessed data : Access without delay : laptop (Data stores in only 1 AZ across multiple devices) : 99.5%
+
+S3 Glacier Instant Retrieval : Long-lived archive data accessed once a quarter with instant retrieval in milliseconds : 
+
+S3 Glacier Flexible Archieval : For less freq accessed data : We need to initialise the restoration to access the data : Restoration takes min-hours.. 
+
+S3 Glacier Deep Archieval : For less freq accessed data : We need to initialise the restoration to access the data : Restoration takes atleast 12+ hours.. 
+
+S3 Intelligent Tier : if you are not sure about data access patterns.. $$$..
+
+---
+
+Glacier has 3 Retrival/restore options : 
+Bulk : 5-12 hrs
+Standard : 3-5 Hrs
+Expedited : 1-5 Min (Ob size not exceed 250 MB)
+
+---
+Versioning : 
+
+AWS maintains multiple copies of data.
+
+--> If any file deleted, we can get it back by deleting delete marker.
+--> If any file overwridden, we can get it to valid state by deleting the wrong data version.
+
+Permanently delete : No option to get it back.
+delete : There is an option to get it back.
+
+Delete the delete marker to get uyour object back to s3 bucket (set version : show)
+----
+
+LCR / Life Cycle management Rule : 
+
+
+
+======
+
+http status codes:
+
+2XX : OK/Success
+3XX : Redirection
+4XX : Client Side 
+5XX : Server Side
+
+
+==========================
+
+
+Encryption : helps to secure data. Plain text convertes as scrambled text/cypher text for security purpose. It uses KeyMaterial / Encryption keys (Public Key and Private Key)
+
+---
+
+In-Transite Encryption : Whenever data is in flight state/trasfering/transit state, we call it as In-transite encryption. Applying SSL/TLS certificate is AWS responsibility.
+
+---
+
+Server Side Encryption / SSE :
+
+SSE-S3 : Amazon S3 managed keys : S3 generates and manages the key material. 
+Who can decrypt data: Whoever has access to S3, can decrypt and access the data.
+
+--- 
+
+SSE-KMS Key Management Service
+
+SSE-KMS AWS Managed Keys (DMK - Default master key) (aws/s3) : This generates by defautly whenever youa re using the service.. We cannot delete this.. 
+AWS KMS generates and manages the key material.. Whoever has access to S3 platform, they can decrypt.
+
+---
+
+SSE-KMS CMK (Customer Managed keys) : COST-US : User have to generate this key.. Key material Managed by AWS KMS Service.. Along with the Service access, user should have KMS KEY USAGE permissions.. 
+We can Disable/Delete the key.
+
+Step 1 : Chopose "Symmetric"
+Step 2 : Add Name and Tags
+Step 3 : Add Key Administrators
+Step 4 : Add key Usage permissions
+Step 5 : Review and Create
+
+---
+
+SSE-C (Customer provided keys) : COST-US : User have to generate this key.. Key material can be provided by CUSTOMER.. Along with the Service access, user should have KMS KEY USAGE permissions.. 
+We can Disable/Delete the key.
+
+Step 1 : Chopose "Symmetric"
+Step 2 : Add Name and Tags
+Step 3 : Add Key Administrators
+Step 4 : Add key Usage permissions
+Step 5 : Review and Create
+
+Step 6 : Download the Key wrapper
+Step 7 : Wrap your keys, Zip it and upload it to KMS. 
+
+---
+
+Client Side Encryption / CSE: Purely customer's responsibility. Customer can encrypt his data in his local environment and can upload/manage data into s3 platform.
+
+
+=============
+
+Bucket Policies : We can generate and apply polocies at bucket level to control access or to limit to specific operations.
+
+-> JSON format
+
+Bucket ARN (Amazon Resource Name) : arn:aws:s3:::avinash-reddy
+Principal :  IAM User ARN : arn:aws:iam::<account-id>:user/username
+Effect : allow / deny
+Action to effect (allow/deny): PuObject / GeteObject / DeleteObject
+**Conditions : IP Conditions / Account
+ 
+
+Bucket Level Operations : Deleting bucket, enabling versioning, adding acl, adding bucket policy.
+	--> Bucket ARN : arn:aws:s3:::avinash-reddy
+
+Object Level operations : delete object, upload object, putobject
+	--> arn:aws:s3:::avinash-reddy/*
+
+==========
+
+S3 performance:
+
+2,500 : PUTObject per prefix
+5,500 : GETObject per prefix
+
+--> use prefixes/Folders to store the data for quick search mechanism.
+--> Maintain uniqueness for your Object names.
+
+==========
+
+S3 Consistency Model : 
+
+Strong Read after Write Consistency : When a new object created, we can start reading it without any delay.
+Strong Consistency for Overwrite PUT and DELETE Operations : 
+	--> You upload something/owerwriting, you can access it without delay.
+	--> You deleted an object, When any request comes, it will return "404"
+
+Eventual Consistency for List Operation: Newly added/deleted objects may not list immediately under list results.
+
+==========
+
+MultiPart Upload : Instead of uploading a very big file, we can make it small chunks/parts, and upload it to s3 bucket.
+
+aws s3 cp largefile.mp4 s3://bucket-name/ --part-size 10MB
+
+==========
+
+AWS Snow Family : Without using internet, we can perform data transfer to AWS using physical devices.
+
+==========
+
+S3 Storage Classes
+S3 versioning
+S3 Life Cycle management Rule
+S3 Replications
+S3 Encryption
+S3 Bucket Policy
+S3 Static Web Hosting / S3 Events
+
+==========
+
+
+AWS Direct Connect : Dedicated network connection between our OnPremise network to AWS environment..
+
+
+==========
+
+
+Public Cloud : Open for everyone.. AWS, Azure, GCP.. 
+
+Private Cloud : Designed and Delivered for Only One organisation.. It may present in CLient location / Service provider location.. 
+
+Hybrid Cloud : Combination of Multiple Cloud Platforms.. (pub+Pri) (pub+pub).. : Internet.. Site-to-Site VPN Connection.. AWS Direct Connect..
+
+Community Cloud : Group of org, build the data center and uses the data center.. 
+
+
+
+
+
+

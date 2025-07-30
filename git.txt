@@ -1,0 +1,106 @@
+GIT  : VCS (Distributed version control System)
+
+Developer --> Laptop 
+
+1970 - SCCM : Source Code control system : 1 file
+		Revision control System / RCM : x files, 1 directory
+		CVS (Cuncurrent version System) : x files, x directory, 1 user
+
+2000 - SVN : Subversions				: x files, x directories, x users
+2004 - GIT : Global information tracker 
+
+
+Advantages : 
+--> Distributed in Nature : 
+--> Branching and Merging 
+--> Performacne 
+
+
+----
+
+
+dnf install git -y 		# LinuxOS
+
+git-scm.com/downalods 		--> download the git and install, then open ternal
+
+
+git config --global user.name "avizway"
+git config --global user.email "avizway@gmail.com"
+git config --list
+git config --global --edit
+git config --global core.editor "vim"
+
+git init		--> Initialise a local repo
+
+git add .		
+git commit -m "commit message"
+
+
+Repository / Repo : A repo is a storage location where our project files stores. (in our laptop / remote machine / git repo)
+
+clone : making a local copy on your laptop, of a remote repo. If repo is public, No authentication required.
+
+Push : Sending your commited changes from your local repo to a remote repo. Sending your local changes to remote repo.
+
+pull : Your local repo will be updated with latest code from the remote repo. (fetch the chnages only and updates the local code)
+
+
+Create a Githib account.. 
+
+=========================
+
+
+cd ~
+ls -a
+cd .ssh
+
+ssh-keygen -t ed25519 -C "email@gmail.com"
+
+cat id_ed25519.pub		--> Copy the content and create a new ssh key in github account settings and paste it.
+
+ssh -T git@github.com	--> Run this command to verify the connectivity.
+
+Now onwords, use ssh method to clone the repo. 
+
+===
+
+git remote add origin git@github.com:avizway1/roughnotes.git
+git push -u origin master
+
+
+===
+
+git status
+git log
+git log --oneline
+git log --oneline --author="username"
+git show "commit-id"
+git diff commit-id1..commitid2
+
+
+git config --global diff.tool vscode
+git config --global difftool.prompt false
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

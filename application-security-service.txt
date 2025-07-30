@@ -1,0 +1,157 @@
+CloudTrail : logging service..
+Enabled by defaultly.. 
+Stores last 90 days logs..
+Can we store for unlimited days: yes, Create a Trail
+
+1. Management events : Capture management operations performed on your AWS resources.
+2. Data events : Log the resource operations performed on or within a resource.
+3. Insights events : Identify unusual activity, errors, or user behavior in your account.
+4. Network activity events : Network activity events provide information about resource operations performed on a resource within a virtual private cloud endpoint.
+
+** Can i monitor events happening inside an ec2 instance.?? Ans : NO.. 
+Install Cloudwatch Agent inside an ec2 instance.. 
+
+We can integrate AWS logs with 3rd party tools also.. DataDog, Dynatrace, Site24x7, middleware.io... 
+
+======
+
+AWS Config : Monitor the resources continuously.. Evaluate the configurations and provides complinat and non complinat resources based on the rules we configure.. 
+
+Configuration Recording : Captures the resources changes (Integrated with Cloutrail)
+Compliance Evaluation : We can create rule and Config evaluate the resources.. 
+
+NO FREE TIER ELIGIBILITY..
+
+
+=====
+
+AWS Trsuted Advisor 
+
+=====
+
+DDoS : Distributed Denial of Service (DDoS) : 
+
+AWS Shield : To protect our resources from DDoS Attacks.. : EWnabled by defaultly in all accounts.. Basic protection..
+
+AWS Shield Advanced : Enabled this for attional support, mitigation, preventions from AWS dedicated team..
+
+=====
+
+CloudFront : CDN.. 
+
+ACM : SSL/TLS.. 
+
+====
+
+Delivering website using https protocol : 
+
+Script for http to https redirection
+https://raw.githubusercontent.com/avizway/redirection/master/httptohttps
+
+
+===
+
+Secrets Manager : 
+
+application.properties... 
+
+Parameter Store : 
+
+
+---
+
+SQS : Simple Queue Service : Send and receive mesages.. (poll based message)
+
+Standard Q : Try to delivery on priority (best effort)
+FIFO Q : First In First out : Maintains the priority.. 
+
+Max msg retention period : 14 Days
+Undelivered msgs we can send it to another Queue : DLQ (Dead letter Queue)
+Max msg size is 256 KB (1 chunk = 64 KB)
+
+1 chunk = 1 request
+
+
+=====
+
+SNS : Simple notification Servcice : Push Based message.. 
+
+--> Push Notifications : Delivers/push from the mobile application.. 
+
+
+=============
+
+Physical Server --> Install OS --> Patching OS --> Install App --> Deploy code --> Deliver
+
+Physical Server --> Hypervisor --> Install OS --> patching --> Install App --> Deploy code --> Deliver
+
+EC2 --> Server (AWS manages) --> Installing OS (AWS Manages) --> Patching OS --> Installing App --> Deploy Code --> Deliver
+
+Lambda Server (AWS manages - No View) --> Installing OS (AWS Manages - no view ) --> Patching OS (AWS Manages - No view ) --> Installing App (AWS Manages - No view) --> Deploy Code (Customer) --> Deliver
+
+
+EC2 pricing : Per Hour basis.. /Sec basis.. regardless of load.. 
+Lambda Pricing : Code run duration.. memory consumption.. (10 gb memeory --> 512 MB used to run code)
+
+
+Serverless : No Servers for us to manage.. AWS manages the servers.. 
+Note that the console code editor supports only Node.js, Python, and Ruby.
+
+--> .net
+--> java
+--> python
+--> go
+--> nodejs
+--> ruby
+
+--> Lambda function can run max for a "15 minutes" only.
+
+Canary lambda : periodically opens the given website url and looks for the expected string. 
+
+lmabda --> Store all logs in CloudWatch logs group.
+
+
+REPORT RequestId: 254d9ae5-312d-41e1-abcc-821050fa7870	
+
+
+Can we run a lmbada function within a VPC.?
+Ans : yes
+
+
+================
+
+Training / Sandbox
+Dev
+SIT
+SQA
+UAT (pre-prod)
+PRD
+Central network
+Central logging
+Management Account
+
+OU : Organisational Unit
+SCP : Service Control Policy
+
+
+---
+
+AWS Organisations and AWS Identity Center works together. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
