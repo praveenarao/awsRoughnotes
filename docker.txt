@@ -1,0 +1,648 @@
+Lunch = application
+lunch box = docker container
+
+You can have your lunch box in classroom, mess, play ground, home.. 
+
+Docker container has evrything i.e; app: code, tools, settings, dependencies... : you can run it in your laptop, your friends laptop, cloud..
+Docker is very lightweight. One Small O.S will run within docker container. Actual apple contains an O.s( ex: docker alpine O.s which is 5-6MB) and this O.S is very lightweight
+
+Traditional server mechanism : 1server =1 application. (Like single family home in a 200sqyard plot)
+Advantage: ur apple is running/utlizing entire h/w and can have enough resources.
+Disadvantage: your apple is very small but server configuration is huge/high. This waste resources.
+
+Virtualization: You are going to have h/w. on top of h/w you will have Hipervisor, on top of hip visor you have Virtual machine(V.M) and top of it again has O.S (this consumes hsome space, and this is eliminated in containerization) and on O.s has binaries and sapplications( this is 4 floor apartment in same 200sqyard apartment)
+
+Containerization:  Here on H/w we have Host O.s --> which has container Runtime--> which has App and binary libraries(app itself has O.S and no separate O.s like in virtualization)(this is like in one of the floor, you are further diving and giving small rooms for rent)
+
+---
+There are 2 ways  1) install docker desktop for macOS/windows. Your laptop is host which has port 8080 open 
+2) Launch linux ec2 instance(this is ur host) and install docker within ec2 instance
+
+Configure Docker Desktop in MAc O.S
+-----------------------------------
+1) Verify docker already exists, go to terminal--> docker --version
+2) If it doesn't exist--> go to google, type "docker desktop install for Mac o.s (based on your processor/chip type))
+ 2a) To check Mac processor--> click on apple on top--> system settings-->general --> about --> processor or chip (check if it is intel or anything else)
+ 2b) After right docker desktop is found, click on the app to applications folder in your laptop
+Double click and proceed with installation path
+3) look if docker desktop is running/open (whale icon on top), go to terminal and verify: docker --version
+ 3a) If o/p is "-bash: docker: command not found" though you see docker app in your laptop, means docker cmd is not available in ur macOS terminal. 
+
+3b) This happens if docker desktop is not installed, not running or docker cli is not in ur system $PATH
+
+3c) To check Check if Docker is in your PATH, run 
+Echo $PATH
+Ls -l /usr/local/bin/docker
+If /usr/local/bin/docker does not exist, Docker cli is not linked in bin folder. This is why ur terminal cannot find the docker command.
+
+3d) How to find: a) ensure docker desktop is running (you already did open -a Docker)
+B) find where docker cli is installed "find /Applications/Docker.app -name docker"
+This shows path to docker binary
+C) create a symlink: if the binary is found at docker, create a symlink
+"sudo ln -s /Applications/Docker.app/Contents/Resources/bin/docker /usr/local/bin/docker"
+D) restart ur terminal and try: docker --version
+
+-------------------------------------------------------------------
+
+Launch docker within ec2 instance
+---------------------------------
+1) Launch linux ec2 instance with SG open for required ports like 80, 8080 or 8888 or needed port based on what you define while running container
+2) dnf install docker -y 
+systemctl start docker
+systemctl enable docker
+------------------------------------------------------------------------------------------------------------
+Docker Image:
+An image is a read-only, immutable template that contains the application code, runtime, system tools, libraries, and settings required to run an application.
+It acts as a blueprint or snapshot of a complete software environment.
+Images are built from a Dockerfile, which defines the steps to create the image.
+They are stored in registries (like Docker Hub) and can be shared and reused.
+
+Docker Container:
+A container is a runnable instance of a Docker image. 
+When you "run" an image, Docker creates a container, which is an isolated, executable environment based on the image's specifications.
+Containers are mutable, meaning you can make changes within a running container (e.g., install new software, modify configurations), but these changes are isolated to that specific container and do not affect the original image.
+Containers can be started, stopped, paused, and removed.
+
+--------------------------------------------------------------------------------------------------------
+2)From where do you pull docker existing docker images? 
+Docker hub
+
+3)How to get image from docker hub? 
+Docker pull packgename:tag
+Ex: docker pull nginx:latest
+Docker pull nginx:alpine
+Docker pull https:latest
+
+4) can you create your own custom docker images? 
+Yes. Create Docker file and customize your custom docker file. See more syntax details below
+
+5)What is docker container? 
+
+
+To get docker status:
+Systemctl status docker
+Service docker status
+
+docker info
+
+docker images				--> List the docker images we have in instance/laptop
+
+docker run image-name/id	--> Runs the docker container, but in interactive way.
+
+docker run -d image-name/id	--> Runs the docker container in detached mode.
+
+docker ps					--> List the running containers
+
+docker ps -a				--> List the running and stopped containers
+
+docker rm container-id		--> This will remove the contianer
+
+docker stop container-id	--> This comamnd will stop the container
+
+docker start container-id	--> This comamnd will start the existing container(if container was stopped)
+
+docker kill container-id	--> This comamnd will stop the container by sending kill signal.
+
+docker run app-name		--> if image not available locally, it will pull the image from docker hub and runs the container and starts the container.
+
+docker run -d -p <hostport>:<container-port> image-name:tag-name
+
+docker run -d -p 8080:80 nginx:latest
+
+docker exec -it container-id /bin/bash		--> You can use this command to connect to the container os.
+docker exec -it container-id /bin/sh
+
+
+docker run -d -p 80:80 nginx:latest --> -d for detached way, -it is interactive way(entire shell is occupied), -dit(detached now and later interactive way)
+docker run -d -p 8080:80 nginx:latest  ---> 8080 is host port nd 80 is container port, you can run multiple container using same images, have different port for container.
+
+docker container prune		--> Remove all stopped cotnainers
+
+docker run -dit -p 80:80 nginx:latest
+
+docker run -dit -p 80:80 --name my-webserver nginx:latest		--> Container creates with custom defined name
+
+
+docker inspect <container-id> --> see ipaddress of container and more information for a given container
+
+
+--- network modes types and theory--------------------------------------------------------------------
+In Docker, network_mode specifies how a container's network stack is configured and interacts with the host and other containers.
+ It determines the isolation level and communication capabilities of a container.
+
+Network modes in container:
+
+There are 3 types of network modes for containers
+1) Bridge mode (default mode): more commonly used. Containers connect to a virtual network (bridge) managed by docker. Each container gets its own private Ip address.
+ useCase:  ideal for containers that need isolated networking but still communicate via ports.
+Access: use -p or --publish to expose container ports to the host.
+Ex: docker run --network bridge -p 8080:80 nginx
+
+2) host: the container shares hosts network stack. No n/w isolation between host and container
+Use case: when performance matters or when apple needs full access to host network.
+
+Warning: less secure. All container ports are exposed directly on host
+Ex: docker run --network host nginx
+
+Note: with host network mode, it uses host networking, it binds directly to host port 80. So if u localhost:80, it hits container directly. in host n/w mode, docker does not map container ports to random or specified ports on host,
+The container uses the host ports directly, so must manage and choose ports explicityonly one container can bind to given port
+You cannot use -p or --publish flags with host network there's no nat involved.
+
+To choose port numbers manually in host mode, u need to configure ur application(inside the container) to bind to specific ports Bec docker won't do any port mapping for u in this mode.
+
+Choose a port number manually:
+1) pick unused port number on the host machine.
+ to check what ports are already in use " sudo lost -I -P -n / grep LISTEN
+2) example nginx container on port 8081
+Docker run --rm --network host \ -v $(pwd)/custom_nginx.conf:/etc/nginx/nginx.nginx
+3) in your custom_nginx.conf, set 
+server{
+Listen 8081;
+---
+}
+Now nginx will bind to port 8081 on the host, sine its using in host n/w.
+
+Port conflicts: only one service can bind to a given port (ex port 80) on the host.
+Less isolated: the container has full access to hosts network interfaces.
+3) None: the container has no network interfaces. Fully isolated.
+Use case: for security testing or when networking is not needed.
+Ex: docker run --network none nginx
+
+4) container:<name/id> : shares n/w stack of another container. When 2 or more containers need to communicate visa same n/w stack ex: for logging or monitoring.
+
+Ex: docker run --network container:my-container busybox
+----------------------------------------------------------------------------------------------
+
+
+docker network ls					--> List the networks we have. 
+
+NETWORK ID     NAME      DRIVER    SCOPE
+f4442d918362   bridge    bridge    local
+189c97d94a70   host      host      local
+c1f2b41e3ed2   none      null      local
+
+Bridge Mode : Docker defaultly creates an internal network. It will have its own IP address range. By performing the port mapping, you can deliver to outside world using instance IP Address. 
+
+Host Mode : Container shared the host machine's network. 
+
+None : Container without netwotk. You can get connected to container and cannot do anything with this container as we defined as "none" network mode (as there is no n/w)
+Usecaase of None n/w: to create isolated container that doesn't need connectivity, it doesn't have any n/w. 
+Applications that perform file operations or computations.
+Ex: processing log files, data transformation, running batch logs,
+
+
+---
+
+
+docker network create mynetwork --> to create custom network
+
+docker run -dit --name web1 --network mynetwork alpine
+
+docker run -dit --name web2 --network mynetwork alpine
+
+docker exec -it web1 sh --> connect to docker container
+ping web2 --> within a container, to communicate/connect with another docker container "Web2". Instead app name "web2", can also user ipaddrress of web2 as well.
+
+
+docker inspect 6e443f5c1b8e --> 172.18.0.3
+docker inspect e73349d5bb87 --> 172.18.0.2
+
+N/w --> host n/w
+Defaultly nginx runs on 80 port. Automatically picks 80 port.
+
+
+---
+
+docker run -d --network host nginx		--> This creates a container with host network mode.
+
+---
+
+docker run -it --network none alpine /bin/sh	--> This creates a cotnainer and we connects to it, but no network. 
+
+
+docker run -dit --network none --name test1 alpine
+
+====================================================================================
+You can create your own custom docker images to deliver your application. For creating docker images you need to create Docker file.
+Every docker file starts with "FROM". Docker files are prepared by devpls
+
+Every command is called a layer in docker file.
+
+Dockerfile Preparation:
+
+
+FROM --> Define Base Image to use. 
+
+FROM nginx:latest
+FROM ubuntu:20.06
+
+---
+
+RUN --> Execute the commands in seperate layer on top of base Image.  Ex: on top of ubuntu or nginx os
+
+RUN dnf install telnet -y --> executes this command
+RUN apt-get update && apt-get install -y nginx --> can run multiple commands as well and reduce layers
+
+---
+
+WORKDIR --> Sets the default working directory. This needs to be set before copy command
+
+WORKDIR /app
+WORKDIR /home/ec2-user/
+
+---
+
+COPY --> Copy the files/directories from the host to the image. 
+
+COPY /home/ec2-user/myweb/* /app/
+COPY . . 
+
+---
+
+ADD --> Similar to Copy command, but supports archieve extractions (.zip / .tar.gz)
+
+ADD myzipfile.tar.gz /app/
+
+---
+
+CMD --> provides default arguments for the containers execution. This will be overridden, if we pass any arguments when running the container using "docker run".
+
+CMD ["python", "app.py"] --> this is single command but cannot give space,
+
+--
+
+ENTRYPOINT --> similar to CMD. Defines a command that always runs, even if we pass any arguments when running the container using "docker run"
+
+ENTRYPOINT ["python", "app.py"]
+
+---
+
+ENV --> Sets environment varibales
+
+ENV APP_ENV=dev
+ENV APP_ENV=prd
+
+---
+
+EXPOSE --> Container listens on defined port numnber.
+
+EXPOSE 80
+
+---
+
+VOLUME --> Create a mopunt point and marks it as shared volume with container.
+
+VOLUME /home/ec2-user/myweb
+
+---
+
+USER --> sets the user to use when we are running this image.
+
+USER ec2-user
+USER appuser
+USER 1001
+
+Note: standard in organizations is container should run as non root user.
+---
+
+LABEL --> We can add metadata to the image. Doesn't execute this command but helps us or understanding purpose only.
+
+LABEL owner="avinash@avinash.com" version="1.0"
+
+---
+To use specific shell 
+SHELL 
+HEALTHCHECK --> to perform health check
+ARG --> to pass arguments
+STOPSIGNAL
+SENDSIGNAL
+---
+
+Syntax: 
+#Using nginx alpine image
+FROM nginx:alpine
+# Set the working directory
+WORKDIR /usr/share/nginx/html
+# Remove default nginx static files
+RUN rm -rf *
+# Copy static files from the local directory to the nginx html directory
+# COPY /home/ec2-user/myweb/* /usr/share/nginx/html
+COPY . .
+# Expose port 80 to the outside world
+EXPOSE 80
+#Start nginx server
+CMD ["nginx", "-g", "daemon off;"]
+#Add owner label
+LABEL owner="avinash"
+
+---
+After you prepare docker file, execute the build command from the location where your docker file
+When you build the docker file, we will get our custom image
+
+docker build .
+
+docker build -t mynginx:v1 . --> -t is tag name for custom image V1 is version.
+
+---
+
+Docker rmi https nginx:latest nginx:alpine alpine:latest --> remove docker images
+------
+1. Generate an app.js file, and prepare a Dockerfile to run this app.js file. Use Node base image, copy the app.js to contianer and run it.
+2. Preapre a Dockerfile
+3. build the dockerfile
+4. Run the docker image
+
+--
+
+1. Generate an app.py file, and prepare a Dockerfile to run this app.py file. Use a lightweight base image, copy the app.py to contianer and run it.
+2. Preapre a Dockerfile
+3. build the dockerfile
+4. Run the docker image
+
+---
+.dockerignore file --> (similar to .gitignore) list all the file names that you want to ignore and not have in your image upload to docker hub. This reduces image size.
+---
+Navigate to hub.docker.com--> personal-->signup
+2) Authenticate to docker account from your ec2 instance
+	docker login
+	prompts for username and password.
+	2a) same username as your docker account username
+	2b) password --> can use docker password or PAT (personal access token) method. PAT is secure method.
+		For generating PAT--> docker hub -->account settings-->generate new token--> select options --> generate
+		copy and paste this token generated in ur ec2 password prompt 
+3) add a tag to your image: 
+	docker tag imaged:tag dockerusername/dockerimagename:tag
+4) push to docker hub 
+  Docker push dockerusername/dockerimagename:tag
+5) refresh your repos on docker hub account and see docker image pushed. If tag is not given, latest is the tag given by default.
+---------
+
+Example:
+
+docker login
+
+docker tag awar04-calapp:latest avizway/awar04-calapp:v1
+
+docker push avizway/awar04-calapp:v1 --> push image to docker hub account
+
+docker pull avizway/awar04-calapp --> pull image from docker hub
+
+---
+
+
+docker rm -f $(docker ps -aq)		--> Remove all Containers (Running and Stopped)
+docker rm -f $(docker ps -q)		--> Remove all Containers Stopped containers
+
+---- mount volumes to container---
+Whenever we are running any images, we are actually copying files to container. To edit we have another option.
+We can mount a local directory as a volume to the container. 
+
+docker run -d --name mylocal-mount -p 80:80 -v /home/ec2-user/cal-data/:/usr/share/nginx/html nginx-local:latest
+
+Whatever file changes done in /home/ec2-user/cal-data/ path , shows in mount path /usr/share.nginx/html:ro.z path.
+usecase: for logs, config data, static content/
+
+--------
+Multistaging /multi stage builds: Optimize image size by separating build-time dependencies from runtime dependencies.
+These build time decencies are not needed in the small image we are going build. If you have single build instead of multistage, ur image size will be big.
+
+Multistage builds: 1 stage for building, another stage to copy o/p to another image.
+This improves performance. In real-time multistage mechanism is followed. 
+
+Ex: we don't carry all prep bowls to table, just the finished food is taken to table
+-----------------------------------
+Ex:
+#builder stage (build stage)
+FROM alpine as builder
+WORKDIR /app
+COPY . .
+#stage2: nginx to deliver this (server which serves)
+FROM nginx:alpine
+COPY --from=builder /app/index.html /usr/share/nginx/html/index.html --> some thing available from builder in stage 1 is taken 
+Docker run -d -p 8080:80 --name multistage mynginx:latest
+
+Ex2: multistage with node.js for building and nginx for serving. Have package.json in same directory and also have script with build
+
+FROM node:18 As builder
+WORKDIR /app
+COPY . .
+RUN npm install && rpm run build . --> it prepares build and installs dependencies
+
+#stage1 - This image taking o/p from builder and delivering 
+FROM nginx:alpine
+COPY --from=builder /app/build /usr/share/nginx/html
+-------------------------
+
+How much memory/cpy my container is occupying?
+Docker stats--> shows live cpu, memory io usage of containers
+Docker top <continerid/name>--> shows running process inside a container
+Docker logs <continer-id> --> view logs from a running stopped container
+Docker events--> shows realtime events from docker container
+
+Run an image and allocate specific amount of memory (recommended). Why? So that only 1 container doesn't take all cpu/memory. This helps limit cpu/memory for a container
+
+Docker run -d -p 8080:80 --memory=256m --cpus=1 nginx:latest
+
+How to verify the limit memory?
+Docker inspect <containerid>
+If memory is 0--> unlimited
+If memory is limited, shows in bytes
+
+Tweak to see o/p directly: set format
+
+Docker inspect --format ='{{.Hostconfig.Memory}}' containername
+
+------------
+
+Docker rename oldname newname --> To rename docker container
+Docker pause/unpause containername/id --> pause/unpause container' 
+Docker cp ./copytest.txt container:/pathT--->o copy files from ec3instance/host machine to container or vicerversa
+---------
+
+To share an image (without uploading to docker hub or EKS) within same n/w , without network
+Or Image is in dev environment and copy to another machine without Internet and both machines in same n/w
+Ans: if both are not in same n/w--> docker hub, eke
+If both in same n/w and no internet: zip/tar image and load in another machine
+Ex: docker save -o calapp.tar --> create the zip file of the image calapp (without zipping, image cannot be copied)
+Docker load -I tarfilename.tar (to unzip image in another machine)
+----------
+
+Docker history image name -->shows history of image layers
+
+---
+Cache: while building image, give --no-cache. If --no-cache, gets updated information from docker hub.
+-----
+
+---
+
+** docker logs <container-id>		--> View logs from a running / stopped container
+docker stats						--> Live CPU, Memory and I/O usage.
+docker top <container-id>			--> Shows the running processes inside a container
+docker events						--> shows realtime events from docker daemon
+
+
+Limit Resources to a Container:
+
+docker inspect <container-id>		--> All the configuration related information of the container.
+
+docker inspect --format='{{.HostConfig.Memory}}' mycalapp
+
+docker run -d -p 80:80 --memory=256m --cpus=1 --name mycalapp <image-name>
+
+---
+
+docker rename <old-name> <new-name>		--> Rename a container
+
+docker pause <container-name/id>		--> Will pause all the processes at container level
+docker unpause <container-name/id>		--> Will un-pause all the processes at container level
+
+docker cp <localpath> <containerpath>
+
+docker cp ./file1.txt <container>:/tmp	--> Copy a host file to a container / vice versa
+
+
+docker save -o myimage.tar <image-name>		--> THis will create a zipped file of the given image (You can copy this/ SCP this to another machine in your network)
+
+docker load -i myimage.tar					--> THis will load image from the zip file
+
+docker history <image-name>				--> Shows history of Image layers
+	
+
+docker build --no-cache -t <name:tag> .		--> Builds the image, without using any cached layers.
+
+---
+
+
+Elastic Container Registry : Fully-managed Docker container registry : Share and deploy container software, publicly or privately.
+
+---
+
+Steps : 
+1. Login to ECR 
+(aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 123121312.dkr.ecr.ap-south-1.amazonaws.com)
+
+2. Build the image if you have a Dockerfile (** Skip this step if you already have an image to push)
+docker build -t awar04-calapp .
+
+
+3. Add a tag to push it to the ECR service  (Image name should resemble the ECR URI)
+
+docker tag awar04-calapp:latest 123121312.dkr.ecr.ap-south-1.amazonaws.com/awar04-calapp:latest
+
+--> docker tag local-image-name:tag remote-repo-uri/imagename:tag
+
+docker tag awar04-calapp:latest 828477980115.dkr.ecr.ap-south-1.amazonaws.com/awar04-calapp:latest
+
+docker push 828477980115.dkr.ecr.ap-south-1.amazonaws.com/awar04-calapp:latest
+
+---
+
+Docker Compose: plugin to run multiple images. 
+I want to run 2 docker containers. 
+1st DB should start.. once it is up and running, then only DB-GUI Tool container should start.
+
+Normal process--> run db container first, once it is up and running, run dbGUI container 
+Simplified/automated process-->done using docker compose
+
+Installation--> GitHub docker compost, copy script
+b)Paste in your ec2 and enter. This takes care of installing docker compose
+C) validate installation: docker compose version
+
+In docker compose, everything is taken as a service (not going to run cmd)
+ I.e., instead of docker run -d -p 8080:80 --name calapp nginx:v1
+
+We create a file called compose.yaml
+
+Ex:( indentation is import)
+Services:
+	calapp:
+		image:nginx:v1
+		ports:"8080:80"
+
+Docker compose commands
+
+Docker compose up--> starts container but runs in foreground (run in same location as compose.yaml file is)
+Docker compose up -d --> starts container and runs in background, doesn't take up entire terminal
+
+Docker compose down--> stops container
+
+Ex2: compose.yaml--> once db is up and running in port 5432 then ui tool admirer 
+
+Services:
+	db: ------> what service
+		image: Postgres's:16-latest
+		environment:
+			POSTGRESS_USER:praveena
+			POSTGRESS_PASWORD: mypass
+			POSTGRESS_DB:postgress
+		ports:
+			-"5432:5432"
+		volumes:
+			-pgdata:/var/lib/postgresssql/data
+	admirer: ------> this is service2
+		image:adminer
+		ports:
+			-"8080:80"
+		depends_on:
+			-db ----------> waits for db start. Only when db is up and running
+		volumes
+		-pgdata
+
+Docker images
+Docker compose build--> builds images
+Docker compose ps --> auto check anything running with compose
+Docker compose logs --> to check logs with compose
+Docker compose up -d--> starts the container
+
+Every single is treated as a service in docker compose.
+
+Docker compose logs db--> to see db image logs
+Docker compose logs admire --> to see admire logs
+
+Docker compose exec db ls --> connects to db and lists ls
+Docker compose exec db psql -U postgressu---> username
+First part is connecting then next is username
+
+Select * from schoolsdb
+
+Docker compose restart db--> restart db service only
+Docker compose rm --> remove only stopped containers
+Docker compose rm -f --> remove forcefully only stopped containers
+
+---
+
+
+Image : Build : Running --> App --> Down
+
+--
+
+ECS
+EKS
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
